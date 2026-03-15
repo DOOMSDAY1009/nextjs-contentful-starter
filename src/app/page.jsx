@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { Hero } from "../components/Hero.jsx";
 import { Stats } from "../components/Stats.jsx";
 import { getPageFromSlug } from "../utils/content.js";
@@ -12,33 +11,24 @@ export default async function ComposablePage() {
   try {
     const page = await getPageFromSlug("/");
 
-    // If page does not exist
     if (!page) {
-      return (
-        <div style={{ padding: "40px", textAlign: "center" }}>
-          <h1>Page Not Found</h1>
-        </div>
-      );
+      return <h1>No page data found</h1>;
     }
 
     return (
-      <div data-sb-object-id={page.id}>
+      <div>
         {(page.sections || []).map((section, idx) => {
           const Component = componentMap[section.type];
-
-          // If component type not found, skip it
           if (!Component) return null;
-
           return <Component key={idx} {...section} />;
         })}
       </div>
     );
   } catch (error) {
-    console.error("Error loading page:", error);
-
     return (
-      <div style={{ padding: "40px", textAlign: "center" }}>
-        <h1>Something went wrong</h1>
+      <div style={{ padding: "40px" }}>
+        <h1>Error:</h1>
+        <pre>{error.message}</pre>
       </div>
     );
   }
